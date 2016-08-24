@@ -1,0 +1,26 @@
+name: soapysdr-server 
+version: 1
+summary: SoapySDR server
+description: SoapySDR server
+confinement: strict
+
+apps:
+    server:
+        command: bin/SoapySDRServer --bind
+        daemon: simple
+        plugs: [network, network-bind]
+
+parts:
+    soapysdr:
+        plugin: cmake
+        source: https://github.com/ricmm/SoapySDR.git
+        configflags: ["-DIS_SNAP_BUILD=1"]
+    soapyremote:
+        plugin: cmake
+        source: https://github.com/pothosware/SoapyRemote.git
+        after: [soapysdr]
+    limesuite:
+        plugin: cmake
+        source: https://github.com/myriadrf/LimeSuite.git
+        after: [soapysdr, soapyremote]
+        build-packages: [libsqlite3-dev, libi2c-dev, libusb-1.0-0-dev, libwxgtk3.0-dev, freeglut3-dev]
